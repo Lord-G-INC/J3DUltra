@@ -1,5 +1,5 @@
 {
-    "name" : "J3DUltra",
+    "name" : "j3dultra",
     "version-string" : "j3dultra-win",
     "dependencies": [
         "zlib",
