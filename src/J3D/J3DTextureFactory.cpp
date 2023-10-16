@@ -16,7 +16,7 @@ J3DTextureFactory::J3DTextureFactory(J3DTextureBlock* srcBlock, bStream::CStream
 	mNameTable.Deserialize(stream);
 }
 
-std::shared_ptr<J3DTexture> J3DTextureFactory::Create(bStream::CStream* stream, uint32_t index) {
+std::shared_ptr<J3DTexture> J3DTextureFactory::Create(bStream::CStream* stream, uint32_t index, bool setup_gl) {
 	uint32_t dataOffset = mBlock->TexTableOffset + (index * TEXTURE_ENTRY_SIZE);
 	stream->seek(dataOffset);
 
@@ -27,6 +27,7 @@ std::shared_ptr<J3DTexture> J3DTextureFactory::Create(bStream::CStream* stream, 
 
 	// Generate GL data
 	texture->TexHandle = UINT32_MAX;
+	if (setup_gl) {
 	glCreateTextures(GL_TEXTURE_2D, 1, &texture->TexHandle);
 
 	glTextureParameteri(texture->TexHandle, GL_TEXTURE_WRAP_S, GXWrapToGLWrap(texture->WrapS));
@@ -39,7 +40,7 @@ std::shared_ptr<J3DTexture> J3DTextureFactory::Create(bStream::CStream* stream, 
 	glTextureParameterf(texture->TexHandle, GL_TEXTURE_MAX_ANISOTROPY, GXAnisoToGLAniso(texture->MaxAnisotropy));
 
 	glTextureStorage2D(texture->TexHandle, texture->MipmapCount, GL_RGBA8, texture->Width, texture->Height);
-
+	}
 	// Load image data
 	stream->seek(dataOffset + texture->TextureOffset);
 
@@ -82,7 +83,9 @@ std::shared_ptr<J3DTexture> J3DTextureFactory::Create(bStream::CStream* stream, 
 		}
 
 		texture->ImageData.push_back(imgData);
+		if (setup_gl) {
 		glTextureSubImage2D(texture->TexHandle, i, 0, 0, mipWidth, mipHeight, GL_RGBA, GL_UNSIGNED_BYTE, imgData);
+		}
 	}
 
 	return texture;

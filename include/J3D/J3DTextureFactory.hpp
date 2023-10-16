@@ -14,6 +14,7 @@ struct J3DTextureBlock;
 constexpr uint32_t TEXTURE_ENTRY_SIZE = 32;
 
 class J3DTextureFactory {
+protected:
 	J3DTextureBlock* mBlock;
 	J3DNameTable mNameTable;
 
@@ -52,7 +53,8 @@ class J3DTextureFactory {
 
 public:
 	J3DTextureFactory(J3DTextureBlock* srcBlock, bStream::CStream* stream);
+	J3DTextureFactory() : mBlock(0), mNameTable() {}
 	~J3DTextureFactory() {}
 
-	std::shared_ptr<J3DTexture> Create(bStream::CStream* stream, uint32_t index);
+	std::shared_ptr<J3DTexture> Create(bStream::CStream* stream, uint32_t index, bool setup_gl = false);
 };
