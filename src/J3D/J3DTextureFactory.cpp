@@ -5,6 +5,8 @@
 #include "bstream.h"
 
 #include <cmath>
+#include "png.hpp"
+#include <fmt/format.h>
 
 const float ONE_EIGHTH = 0.125f;
 const float ONE_HUNDREDTH = 0.01;
@@ -673,4 +675,23 @@ float J3DTextureFactory::GXAnisoToGLAniso(EGXMaxAnisotropy aniso) {
 	}
 
 	return 1.0f;
+}
+
+
+void J3DTextureFactory::OutputPNG(uint32_t index, std::shared_ptr<J3DTexture> texture) {
+	uint16_t mipWidth = texture->Width / (uint16_t)std::pow(2.0, index);
+	uint16_t mipHeight = texture->Height / (uint16_t)std::pow(2.0, index);
+	png::image<png::rgba_pixel> image = png::image<png::rgba_pixel>(mipWidth, mipHeight);
+	auto data = texture->ImageData[index];
+	auto& buffer = image.get_pixbuf();
+	size_t pos = 0;
+	for (size_t i = 0; i < buffer.get_height(); i++) {
+		auto& pixel_vec = buffer.get_row(i);
+		for (auto& pixel : pixel_vec) {
+			pixel = *reinterpret_cast<png::rgba_pixel*>(data);
+			data += 4;
+		}
+	}
+	auto name = fmt::format("{}{}.png", texture->Name, index);
+	image.write(name.c_str());
 }

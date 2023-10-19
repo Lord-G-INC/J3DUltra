@@ -3,6 +3,7 @@
     "version-string" : "j3dultra-win",
     "dependencies": [
         "zlib",
-        "libpng"
+        "libpng",
+        "fmt"
     ]
 }

@@ -48,13 +48,11 @@ protected:
 	uint32_t GXFilterToGLFilter(EGXFilterMode gxFilter);
 	float GXAnisoToGLAniso(EGXMaxAnisotropy aniso);
 
-	// Debug
-	void OutputPNG(uint32_t index, std::shared_ptr<J3DTexture> texture);
-
 public:
 	J3DTextureFactory(J3DTextureBlock* srcBlock, bStream::CStream* stream);
 	J3DTextureFactory() : mBlock(0), mNameTable() {}
 	~J3DTextureFactory() {}
 
 	std::shared_ptr<J3DTexture> Create(bStream::CStream* stream, uint32_t index, bool setup_gl = false);
+	void OutputPNG(uint32_t index, std::shared_ptr<J3DTexture> texture);
 };
